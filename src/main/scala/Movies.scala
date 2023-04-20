@@ -34,7 +34,7 @@ class Movies()(implicit val db: Connection) {
   
   private val peopleRouter = Router {
     case ("GET", s"/people/$name", request) => Response(Templates.root(
-      name,
+      s"Movies watched with $name",
       Watch.get(person = Some(name)),
       request.params.getOrElse("sort_by", "date")
     ))
