@@ -9,13 +9,13 @@ import scala.util.Using
 
 class Movies()(implicit val db: Connection) {
   private def person(name: String): String = {
-    Templates.person(name, Watch.get(person = Some(name)))
+    Templates.person(name, MovieWatch.get(person = Some(name)))
   }
   
   private val rootRouter = Router {
     case ("GET", "/", request) => Response(Templates.root(
       "Noah's movie list",
-      Watch.get(),
+      MovieWatch.get(),
       request.params.getOrElse("sort_by", "date")
     ))
   }
@@ -27,7 +27,7 @@ class Movies()(implicit val db: Connection) {
   private val moviesRouter = Router {
     case ("GET", s"/movies/$title", request) => Response(Templates.root(
       title,
-      Watch.get(title = Some(title)),
+      MovieWatch.get(title = Some(title)),
       request.params.getOrElse("sort_by", "date")
     ))
   }
@@ -35,7 +35,7 @@ class Movies()(implicit val db: Connection) {
   private val peopleRouter = Router {
     case ("GET", s"/people/$name", request) => Response(Templates.root(
       s"Movies watched with $name",
-      Watch.get(person = Some(name)),
+      MovieWatch.get(person = Some(name)),
       request.params.getOrElse("sort_by", "date")
     ))
   }

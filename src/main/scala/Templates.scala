@@ -12,7 +12,7 @@ object Templates {
 
   private def pluralize(count: Int, singular: String, plural: String): String = s"$count ${if (count == 1) singular else plural}"
 
-  def root(_title: String, movies: Seq[Watch], sort_by: String): String = doctype + html(
+  def root(_title: String, movies: Seq[MovieWatch], sort_by: String): String = doctype + html(
     head(
       title(_title),
       link(rel:="icon", href:="/static/favicon.png"),
@@ -23,13 +23,14 @@ object Templates {
       p(pluralize(movies.length, "result", "results")),
       table(
         thead(
-          tr(Seq("Title", "Rating", "Date", "Watched with").map { header =>
-            th(a(href:=s"?sort_by=${header.toLowerCase.replace(" ", "_")}", header))
+          tr(Seq("Title", "Rating", "Cried?", "Date", "Watched with").map { header =>
+            th(a(href:=s"?sort_by=${header.toLowerCase.replace(" ", "_").replace("?", "")}", header))
           })
         ),
-        for (Watch(title, rating, date, watched_with) <- sort_by match {
+        for (MovieWatch(title, rating, cried, date, watched_with) <- sort_by match {
           case "title" => movies.sortBy(_.title)
           case "rating" => movies.sortBy(_.rating).reverse
+          case "cried" => movies.sortBy(m => (!m.cried, -m.rating))
           case "date" => movies.sortBy(_.date).reverse
           case "watched_with" => movies.sortBy(_.watched_with.length).reverse
           case _ => movies.sortBy(_.date).reverse
@@ -37,6 +38,7 @@ object Templates {
           tr(
             td(a(href:=s"/movies/${title.urlEncoded}", title)),
             td(rating),
+            td(if (cried) "✓" else "╳"),
             td(dateFormatter.format(date)),
             td(watched_with.flatMap(name => Seq(a(href:=s"/people/${name.urlEncoded}", name), frag(", "))).dropRight(1))
           )
@@ -45,7 +47,7 @@ object Templates {
     )
   )
 
-  def movie(movie: Seq[Watch]): String = doctype + html(
+  def movie(movie: Seq[MovieWatch]): String = doctype + html(
     head(
       tag("title")(s"${movie.head.title}"),
       link(rel:="icon", href:="/static/favicon.png"),
@@ -55,12 +57,12 @@ object Templates {
       a(href:="/", "All movies"),
       h1(movie.head.title),
       ul(
-        for (Watch(title, rating, date, people) <- movie) yield {
+        for (MovieWatch(title, rating, cried, date, people) <- movie) yield {
           li(s"${dateFormatter.format(date)}: ", people.flatMap(name => Seq(a(href:=s"https://journal.ivoah.net/people/$name", name), frag(", "))).dropRight(1))
         }
       )
     )
   )
   
-  def person(name: String, movies: Seq[Watch]): String = doctype + html()
+  def person(name: String, movies: Seq[MovieWatch]): String = doctype + html()
 }

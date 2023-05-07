@@ -5,10 +5,10 @@ import java.util.Date
 import scala.collection.mutable
 import scala.util.Using
 
-case class Watch(title: String, rating: Double, date: Date, watched_with: Seq[String])
+case class MovieWatch(title: String, rating: Double, cried: Boolean, date: Date, watched_with: Seq[String])
 
-object Watch {
-  def get(title: Option[String] = None, person: Option[String] = None)(implicit db: Connection): Seq[Watch] = {
+object MovieWatch {
+  def get(title: Option[String] = None, person: Option[String] = None)(implicit db: Connection): Seq[MovieWatch] = {
     Using.resource({
       if (title.nonEmpty) db.prepareStatement("SELECT * FROM movies WHERE title = ?")
       else if (person.nonEmpty) db.prepareStatement("SELECT * FROM movies WHERE LOCATE(?, watched_with)")
@@ -17,11 +17,12 @@ object Watch {
       title.foreach(stmt.setString(1, _))
       person.foreach(stmt.setString(1, _))
       val results = stmt.executeQuery()
-      val buffer = mutable.Buffer[Watch]()
+      val buffer = mutable.Buffer[MovieWatch]()
       while (results.next()) {
-        buffer.append(Watch(
+        buffer.append(MovieWatch(
           results.getString("title"),
           results.getDouble("rating"),
+          results.getBoolean("cried"),
           results.getDate("date"),
           results.getString("watched_with").split(", ").filter(_.nonEmpty)
         ))
