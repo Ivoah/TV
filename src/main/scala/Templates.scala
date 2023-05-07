@@ -12,13 +12,14 @@ object Templates {
 
   private def pluralize(count: Int, singular: String, plural: String): String = s"$count ${if (count == 1) singular else plural}"
 
-  def root(_title: String, movies: Seq[MovieWatch], sort_by: String): String = doctype + html(
+  def root(_title: String, movies: Seq[MovieWatch], sort_by: String, nav_back: Boolean): String = doctype + html(
     head(
       title(_title),
       link(rel:="icon", href:="/static/favicon.png"),
       link(rel:="stylesheet", href:="/static/style.css")
     ),
     body(
+      if (nav_back) a(`class`:="lnav", href:="/", "< all movies") else frag(),
       h1(_title),
       p(pluralize(movies.length, "result", "results")),
       table(

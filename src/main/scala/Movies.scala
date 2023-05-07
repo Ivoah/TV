@@ -16,7 +16,8 @@ class Movies()(implicit val db: Connection) {
     case ("GET", "/", request) => Response(Templates.root(
       "Noah's movie list",
       MovieWatch.get(),
-      request.params.getOrElse("sort_by", "date")
+      request.params.getOrElse("sort_by", "date"),
+      nav_back = false
     ))
   }
 
@@ -28,7 +29,8 @@ class Movies()(implicit val db: Connection) {
     case ("GET", s"/movies/$title", request) => Response(Templates.root(
       title,
       MovieWatch.get(title = Some(title)),
-      request.params.getOrElse("sort_by", "date")
+      request.params.getOrElse("sort_by", "date"),
+      nav_back = true
     ))
   }
   
@@ -36,7 +38,8 @@ class Movies()(implicit val db: Connection) {
     case ("GET", s"/people/$name", request) => Response(Templates.root(
       s"Movies watched with $name",
       MovieWatch.get(person = Some(name)),
-      request.params.getOrElse("sort_by", "date")
+      request.params.getOrElse("sort_by", "date"),
+      nav_back = true
     ))
   }
   

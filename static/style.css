@@ -1,1 +1,7 @@
 @import url('https://ivoah.net/common.css');
+
+.lnav {
+    position: absolute;
+    left: 5px;
+    top: 0px;
+}
