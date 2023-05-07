@@ -9,10 +9,11 @@ case class MovieWatch(title: String, rating: Double, cried: Boolean, date: Date,
 
 object MovieWatch {
   def get(title: Option[String] = None, person: Option[String] = None)(implicit db: Connection): Seq[MovieWatch] = {
+    val order_by = "ORDER BY rating DESC, date ASC"
     Using.resource({
-      if (title.nonEmpty) db.prepareStatement("SELECT * FROM movies WHERE title = ?")
-      else if (person.nonEmpty) db.prepareStatement("SELECT * FROM movies WHERE LOCATE(?, watched_with)")
-      else db.prepareStatement("SELECT * FROM movies")
+      if (title.nonEmpty) db.prepareStatement(s"SELECT * FROM movies WHERE title = ? $order_by")
+      else if (person.nonEmpty) db.prepareStatement(s"SELECT * FROM movies WHERE LOCATE(?, watched_with) $order_by")
+      else db.prepareStatement(s"SELECT * FROM movies $order_by")
     }) { stmt =>
       title.foreach(stmt.setString(1, _))
       person.foreach(stmt.setString(1, _))

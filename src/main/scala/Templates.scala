@@ -30,7 +30,7 @@ object Templates {
         for (MovieWatch(title, rating, cried, date, watched_with) <- sort_by match {
           case "title" => movies.sortBy(_.title)
           case "rating" => movies.sortBy(_.rating).reverse
-          case "cried" => movies.sortBy(m => (!m.cried, -m.rating))
+          case "cried" => movies.sortBy(!_.cried)
           case "date" => movies.sortBy(_.date).reverse
           case "watched_with" => movies.sortBy(_.watched_with.length).reverse
           case _ => movies.sortBy(_.date).reverse
