@@ -38,7 +38,7 @@ object Templates {
           tr(
             td(a(href:=s"/movies/${title.urlEncoded}", title)),
             td(rating),
-            td(if (cried) "✓" else "╳"),
+            td(if (cried) "✓" else "✗"),
             td(dateFormatter.format(date)),
             td(watched_with.flatMap(name => Seq(a(href:=s"/people/${name.urlEncoded}", name), frag(", "))).dropRight(1))
           )
