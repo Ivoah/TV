@@ -16,7 +16,7 @@ class Movies()(implicit val db: Connection) {
     case ("GET", "/", request) => Response(Templates.root(
       "Noah's movie list",
       MovieWatch.get(),
-      request.params.getOrElse("sort_by", "date"),
+      request.params.getOrElse("sort_by", "rating"),
       nav_back = false
     ))
   }
