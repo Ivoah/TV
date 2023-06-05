@@ -1,4 +1,4 @@
-package net.ivoah.movies
+package net.ivoah.tv
 
 import java.sql.Connection
 import java.util.Date

@@ -1,4 +1,4 @@
-package net.ivoah.movies
+package net.ivoah.tv
 
 import java.text.SimpleDateFormat
 import scalatags.Text.all._

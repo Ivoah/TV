@@ -13,8 +13,8 @@ ThisBuild / assemblyMergeStrategy := {
 
 lazy val root = (project in file("."))
   .settings(
-    name := "movies",
-    idePackagePrefix := Some("net.ivoah.movies"),
+    name := "tv",
+    idePackagePrefix := Some("net.ivoah.tv"),
     libraryDependencies ++= Seq(
       "net.ivoah" %% "vial" % "0.3.3",
       "mysql" % "mysql-connector-java" % "8.0.28",
@@ -23,5 +23,5 @@ lazy val root = (project in file("."))
       "com.lihaoyi" %% "scalatags" % "0.12.0",
       "org.rogach" %% "scallop" % "4.1.0"
     ),
-    assembly / assemblyOutputPath := file("movies.jar")
+    assembly / assemblyOutputPath := file("tv.jar")
   )

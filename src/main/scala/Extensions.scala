@@ -1,4 +1,4 @@
-package net.ivoah.movies
+package net.ivoah.tv
 
 import java.net.URLEncoder
 import java.security.MessageDigest

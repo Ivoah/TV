@@ -1,4 +1,4 @@
-package net.ivoah.movies
+package net.ivoah.tv
 
 import java.sql.{Connection, DriverManager}
 import java.nio.file._
