@@ -12,58 +12,89 @@ object Templates {
 
   private def pluralize(count: Int, singular: String, plural: String): String = s"$count ${if (count == 1) singular else plural}"
 
-  def root(_title: String, movies: Seq[MovieWatch], sort_by: String, nav_back: Boolean): String = doctype + html(
+  def root(shows: Seq[Show], sort_by: String): String = doctype + html(
     head(
-      title(_title),
-      link(rel:="icon", href:="/static/favicon.png"),
-      link(rel:="stylesheet", href:="/static/style.css")
+      title("Noah's TV shows"),
+      link(rel := "icon", href := "/static/favicon.png"),
+      link(rel := "stylesheet", href := "/static/style.css")
     ),
     body(
-      if (nav_back) a(`class`:="lnav", href:="/", "< all movies") else frag(),
-      h1(_title),
-      p(pluralize(movies.length, "result", "results")),
+      h1("Noah's TV shows"),
+      p(pluralize(shows.length, "result", "results")),
       table(
         thead(
-          tr(Seq("Title", "Rating", "Cried?", "Date", "Watched with").map { header =>
-            th(a(href:=s"?sort_by=${header.toLowerCase.replace(" ", "_").replace("?", "")}", header))
+          tr(Seq("Show", "Episodes", "Last watched", "Watched with").map { header =>
+            th(a(href := s"?sort_by=${header.toLowerCase.replace(" ", "_")}", header))
           })
         ),
-        for (MovieWatch(title, rating, cried, date, watched_with) <- sort_by match {
-          case "title" => movies.sortBy(_.title)
-          case "rating" => movies.sortBy(_.rating).reverse
-          case "cried" => movies.sortBy(!_.cried)
-          case "date" => movies.sortBy(_.date).reverse
-          case "watched_with" => movies.sortBy(_.watched_with.length).reverse
-          case _ => movies.sortBy(_.date).reverse
+        for (Show(title, episodes, last_watched, watched_with) <- sort_by match {
+          case "show" => shows.sortBy(_.title)
+          case "episodes" => shows.sortBy(_.episodes).reverse
+          case "last_watched" => shows.sortBy(_.last_watched).reverse
+          case "watched_with" => shows.sortBy(_.watched_with.size).reverse
+          case _ => shows.sortBy(_.last_watched).reverse
         }) yield {
           tr(
-            td(a(href:=s"/movies/${title.urlEncoded}", title)),
-            td(rating),
-            td(if (cried) "✓" else "✗"),
-            td(dateFormatter.format(date)),
-            td(watched_with.flatMap(name => Seq(a(href:=s"/people/${name.urlEncoded}", name), frag(", "))).dropRight(1))
+            td(a(href := s"/shows/${title.urlEncoded}", title)),
+            td(episodes),
+            td(dateFormatter.format(last_watched)),
+            td(watched_with.toSeq.flatMap(name => Seq(a(href := s"/people/${name.urlEncoded}", name), frag(", "))).dropRight(1))
           )
         }
       )
     )
   )
 
-  def movie(movie: Seq[MovieWatch]): String = doctype + html(
+  def details(_title: String, watches: Seq[Watch], sort_by: String, nav_back: Boolean): String = doctype + html(
     head(
-      tag("title")(s"${movie.head.title}"),
-      link(rel:="icon", href:="/static/favicon.png"),
-      link(rel:="stylesheet", href:="/static/style.css")
+      title(_title),
+      link(rel := "icon", href := "/static/favicon.png"),
+      link(rel := "stylesheet", href := "/static/style.css")
     ),
     body(
-      a(href:="/", "All movies"),
-      h1(movie.head.title),
-      ul(
-        for (MovieWatch(title, rating, cried, date, people) <- movie) yield {
-          li(s"${dateFormatter.format(date)}: ", people.flatMap(name => Seq(a(href:=s"https://journal.ivoah.net/people/$name", name), frag(", "))).dropRight(1))
+      if (nav_back) a(`class` := "lnav", href := "/", "< all shows") else frag(),
+      h1(_title),
+      p(pluralize(watches.length, "result", "results")),
+      table(
+        thead(
+          tr(Seq("Show", "Episode", "Date", "Watched with").map { header =>
+            th(a(href := s"?sort_by=${header.toLowerCase.replace(" ", "_")}", header))
+          })
+        ),
+        for (Watch(title, episode, date, watched_with) <- sort_by match {
+          case "show" => watches.sortBy(_.show)
+          case "episode" => watches.sortBy(_.episode).reverse
+          case "date" => watches.sortBy(_.date).reverse
+          case "watched_with" => watches.sortBy(_.watched_with.size).reverse
+          case _ => watches.sortBy(_.date).reverse
+        }) yield {
+          tr(
+            td(a(href := s"/shows/${title.urlEncoded}", title)),
+            td(episode),
+            td(dateFormatter.format(date)),
+            td(watched_with.toSeq.flatMap(name => Seq(a(href := s"/people/${name.urlEncoded}", name), frag(", "))).dropRight(1))
+          )
         }
       )
     )
   )
-  
-  def person(name: String, movies: Seq[MovieWatch]): String = doctype + html()
+
+//  def movie(movie: Seq[Watch]): String = doctype + html(
+//    head(
+//      tag("title")(s"${movie.head.title}"),
+//      link(rel:="icon", href:="/static/favicon.png"),
+//      link(rel:="stylesheet", href:="/static/style.css")
+//    ),
+//    body(
+//      a(href:="/", "All movies"),
+//      h1(movie.head.title),
+//      ul(
+//        for (Watch(title, rating, cried, date, people) <- movie) yield {
+//          li(s"${dateFormatter.format(date)}: ", people.flatMap(name => Seq(a(href:=s"https://journal.ivoah.net/people/$name", name), frag(", "))).dropRight(1))
+//        }
+//      )
+//    )
+//  )
+
+//  def person(name: String, movies: Seq[Watch]): String = doctype + html()
 }
