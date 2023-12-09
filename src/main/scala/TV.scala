@@ -20,7 +20,7 @@ class TV()(implicit val db: Connection) {
     case ("GET", s"/static/$file", _) => Response.forFile(Paths.get(s"static/$file"))
   }
   
-  private val moviesRouter = Router {
+  private val showsRouter = Router {
     case ("GET", s"/shows/$title", request) => Response(Templates.details(
       title,
       Watch.get(show = Some(title)),
@@ -38,5 +38,5 @@ class TV()(implicit val db: Connection) {
     ))
   }
   
-  val router: Router = rootRouter ++ staticRouter ++ moviesRouter ++ peopleRouter
+  val router: Router = rootRouter ++ staticRouter ++ showsRouter ++ peopleRouter
 }

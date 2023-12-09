@@ -30,14 +30,14 @@ object Templates {
         for (Show(title, episodes, last_watched, watched_with) <- sort_by match {
           case "show" => shows.sortBy(_.title)
           case "episodes" => shows.sortBy(_.episodes).reverse
-          case "last_watched" => shows.sortBy(_.last_watched).reverse
+          case "last_watched" => shows.sortBy(_.last_watched._2).reverse
           case "watched_with" => shows.sortBy(_.watched_with.size).reverse
-          case _ => shows.sortBy(_.last_watched).reverse
+          case _ => shows.sortBy(_.last_watched._2).reverse
         }) yield {
           tr(
             td(a(href := s"/shows/${title.urlEncoded}", title)),
             td(episodes),
-            td(dateFormatter.format(last_watched)),
+            td(s"${last_watched._1} (${dateFormatter.format(last_watched._2)})"),
             td(watched_with.toSeq.flatMap(name => Seq(a(href := s"/people/${name.urlEncoded}", name), frag(", "))).dropRight(1))
           )
         }

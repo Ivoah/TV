@@ -5,12 +5,12 @@ import java.util.Date
 import scala.collection.mutable
 import scala.util.Using
 
-case class Show(title: String, episodes: Int, last_watched: Date, watched_with: Set[String])
+case class Show(title: String, episodes: Int, last_watched: (String, Date), watched_with: Set[String])
 
 object Show {
   def getAll()(implicit db: Connection): Seq[Show] = {
     Using.resource({
-      db.prepareStatement("SELECT `show` `title`, count(*) `episodes`, max(date) `last_watched`, group_concat(watched_with SEPARATOR ', ') `watched_with` FROM tv GROUP BY `show` ORDER BY `last_watched` DESC;")
+      db.prepareStatement("SELECT `show` `title`, count(*) `episodes`, max(date) `last_watched`, episode, group_concat(watched_with SEPARATOR ', ') `watched_with` FROM tv GROUP BY `show` ORDER BY `last_watched` DESC;")
     }) { stmt =>
       val results = stmt.executeQuery()
       val buffer = mutable.Buffer[Show]()
@@ -18,7 +18,7 @@ object Show {
         buffer.append(Show(
           results.getString("title"),
           results.getInt("episodes"),
-          results.getDate("last_watched"),
+          (results.getString("episode"), results.getDate("last_watched")),
           results.getString("watched_with").split(", ").filter(_.nonEmpty).toSet
         ))
       }
