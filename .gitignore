@@ -45,4 +45,4 @@ bin/
 *.class
 
 out/
-src/main/resources/credentials.txt
+resources/credentials.txt
