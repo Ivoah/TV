@@ -45,4 +45,4 @@ bin/
 *.class
 
 out/
-resources/credentials.txt
+application.conf

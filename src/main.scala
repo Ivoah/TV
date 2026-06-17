@@ -21,16 +21,15 @@ def main(args: String*): Unit = {
   val conf = new Conf(args.toSeq)
   implicit val logger: String => Unit = if (conf.verbose()) println else (msg: String) => ()
 
-  val s"$user:$password" = Using.resource(Source.fromResource("credentials.txt"))(_.getLines().mkString("\n")): @unchecked
-  implicit val db: Connector = Connector("jdbc:mysql://ivoah.net/ivo?autoReconnect=true", user, password)
+  implicit val db: Connector = Connector(Config.database.connectionString, Config.database.user, Config.database.password)
 
   val tv = TV()
   val server = if (conf.socket.isDefined) {
     println(s"Using unix socket: ${conf.socket()}")
-    Server(tv.router, socket = conf.socket.toOption)
+    Server(tv.router, conf.socket())
   } else {
     println(s"Using host/port: ${conf.host()}:${conf.port()}")
-    Server(tv.router, conf.host(), conf.port())
+    Server(tv.router, (conf.host(), conf.port()))
   }
   server.serve()
 }

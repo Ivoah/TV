@@ -1,21 +1,23 @@
 package net.ivoah.tv
 
+import scalatags.Text.all.*
 import java.time.LocalDate
 
-case class Watch(show: String, episode: String, date: LocalDate, watched_with: Set[String])
+import net.ivoah.tv.Extensions.*
+import java.sql.ResultSet
+
+case class Watch(id: Int, show: String, episode: String, date: LocalDate, watched_with: Set[String])
 
 object Watch {
-  def get(show: Option[String] = None, person: Option[String] = None)(implicit db: Connector): Seq[Watch] = {
-    val order_by = "ORDER BY date ASC".raw
-    (
-      if (show.nonEmpty) sql"SELECT * FROM tv WHERE `show` = ${show.get} $order_by"
-      else if (person.nonEmpty) sql"SELECT * FROM tv WHERE LOCATE(${person.get}, watched_with) $order_by"
-      else sql"SELECT * FROM tv $order_by"
-    ).query(r => Watch(
-      r.getString("show"),
-      r.getString("episode"),
-      r.getDate("date").toLocalDate,
-      r.getString("watched_with").split(", ").filter(_.nonEmpty).toSet
-    ))
-  }
+  def fromResultSet(r: ResultSet): Watch = Watch(
+    r.getInt("id"),
+    r.getString("show"),
+    r.getString("episode"),
+    r.getDate("date").toLocalDate,
+    r.getString("watched_with").split(", ").filter(_.nonEmpty).toSet
+  )
+
+  def get(id: Int)(implicit db: Connector): Option[Watch] = sql"SELECT * FROM tv WHERE id=$id".query(fromResultSet).headOption
+  def forShow(show: String)(implicit db: Connector): Seq[Watch] = sql"SELECT * FROM tv WHERE `show` = $show ORDER BY date ASC".query(fromResultSet)
+  def forPerson(person: String)(implicit db: Connector): Seq[Watch] = sql"SELECT * FROM tv WHERE LOCATE($person, watched_with) ORDER BY date ASC".query(fromResultSet)
 }
