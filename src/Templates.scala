@@ -1,14 +1,18 @@
 package net.ivoah.tv
 
-import java.text.SimpleDateFormat
 import scalatags.Text.all._
 import scalatags.Text.tags2.title
 
+import java.time.LocalDate
+
 import Extensions._
+
+object IntExtractor {
+	def unapply(s: String): Option[Int] = s.toIntOption
+}
 
 object Templates {
   private val doctype = "<!DOCTYPE html>\n"
-  private val dateFormatter = new SimpleDateFormat("yyyy-MM-dd")
 
   private def pluralize(count: Int, singular: String, plural: String): String = s"$count ${if (count == 1) singular else plural}"
 
@@ -37,7 +41,7 @@ object Templates {
           tr(
             td(a(href := s"/shows/${title.urlEncoded}", title)),
             td(episodes),
-            td(s"${last_watched._1} (${dateFormatter.format(last_watched._2)})"),
+            td(s"${last_watched._1} (${last_watched._2})"),
             td(watched_with.toSeq.flatMap(name => Seq(a(href := s"/people/${name.urlEncoded}", name), frag(", "))).dropRight(1))
           )
         }
@@ -71,7 +75,7 @@ object Templates {
           tr(
             td(a(href := s"/shows/${title.urlEncoded}", title)),
             td(episode),
-            td(dateFormatter.format(date)),
+            td(date.toString),
             td(watched_with.toSeq.flatMap(name => Seq(a(href := s"/people/${name.urlEncoded}", name), frag(", "))).dropRight(1))
           )
         }

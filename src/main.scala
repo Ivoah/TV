@@ -3,7 +3,6 @@ package net.ivoah.tv
 import net.ivoah.vial.*
 import org.rogach.scallop.*
 
-import java.sql.{Connection, DriverManager}
 import scala.io.Source
 import scala.util.Using
 
@@ -23,7 +22,7 @@ def main(args: String*): Unit = {
   implicit val logger: String => Unit = if (conf.verbose()) println else (msg: String) => ()
 
   val s"$user:$password" = Using.resource(Source.fromResource("credentials.txt"))(_.getLines().mkString("\n")): @unchecked
-  implicit val db: Connection = DriverManager.getConnection("jdbc:mysql://ivoah.net/ivo?autoReconnect=true", user, password)
+  implicit val db: Connector = Connector("jdbc:mysql://ivoah.net/ivo?autoReconnect=true", user, password)
 
   val tv = TV()
   val server = if (conf.socket.isDefined) {

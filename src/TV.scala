@@ -1,10 +1,9 @@
 package net.ivoah.tv
 
-import java.sql.Connection
 import java.nio.file.*
 import net.ivoah.vial.*
 
-class TV()(implicit val db: Connection) {
+class TV()(implicit val db: Connector) {
 //  private def person(name: String): String = {
 //    Templates.person(name, Watch.get(person = Some(name)))
 //  }
