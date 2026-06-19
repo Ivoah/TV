@@ -5,8 +5,6 @@ import scalatags.Text.tags2.title
 
 import java.time.LocalDate
 
-import Extensions._
-
 object IntExtractor {
   def unapply(s: String): Option[Int] = s.toIntOption
 }
@@ -36,20 +34,30 @@ object Templates {
           th(a(href:=s"?sort_by=${header.toLowerCase.replace(" ", "_")}", header))
         })
       ),
-      for (Show(title, episodes, last_watched, watched_with) <- sort_by match {
-        case "show" => shows.sortBy(_.title)
-        case "episodes" => shows.sortBy(_.episodes).reverse
-        case "last_watched" => shows.sortBy(_.last_watched._2).reverse
-        case "watched_with" => shows.sortBy(_.watched_with.size).reverse
-        case _ => shows.sortBy(_.last_watched._2).reverse
-      }) yield {
-        tr(
-          td(a(href:=s"/shows/${title.urlEncoded}", title)),
-          td(episodes),
-          td(s"${last_watched._1} (${last_watched._2})"),
-          td(watched_with.toSeq.flatMap(name => Seq(a(href:=s"/people/${name.urlEncoded}", name), frag(", "))).dropRight(1))
-        )
-      }
+      tbody(
+        form(method:="POST", action:=s"/watch",
+          tr(
+            td(input(`type`:="text", name:="show")),
+            td(input(`type`:="text", name:="episode")),
+            td(input(`type`:="date", name:="date", value:=LocalDate.now().toString)),
+            td(input(`type`:="text", name:="watched_with"), button("Add"))
+          )
+        ),
+        for (Show(title, episodes, last_watched, watched_with) <- sort_by match {
+          case "show" => shows.sortBy(_.title)
+          case "episodes" => shows.sortBy(_.episodes).reverse
+          case "last_watched" => shows.sortBy(_.last_watched._2).reverse
+          case "watched_with" => shows.sortBy(_.watched_with.size).reverse
+          case _ => shows.sortBy(_.last_watched._2).reverse
+        }) yield {
+          tr(
+            td(a(href:=s"/shows/${title.urlEncoded}", title)),
+            td(episodes),
+            td(s"${last_watched._1} (${last_watched._2})"),
+            td(watched_with.toSeq.map(name => a(href:=s"/people/${name.urlEncoded}", name)).mkSeq(br()))
+          )
+        }
+      )
     )
   )
 
@@ -64,9 +72,9 @@ object Templates {
         })
       ),
       tbody(
-        form(method:="POST", action:=s"/shows/${show.urlEncoded}",
+        form(method:="POST", action:=s"/watch",
           tr(
-            td(a(href:=s"/shows/${show.urlEncoded}", show)),
+            td(a(href:=s"/shows/${show.urlEncoded}", show), input(`type`:="hidden", name:="show", value:=show)),
             td(input(`type`:="text", name:="episode", value:={
               watches.sortBy(_.date).lastOption.map(_.episode) match {
                 case Some(s"s${IntExtractor(season)}e${IntExtractor(episode)}") =>
@@ -75,8 +83,7 @@ object Templates {
               }
             })),
             td(input(`type`:="date", name:="date", value:=LocalDate.now().toString)),
-            td(input(`type`:="text", name:="watched_with")),
-            td(button("Add"))
+            td(input(`type`:="text", name:="watched_with"), button("Add"))
           )
         ),
         for (watch <- sort_by match {
@@ -90,8 +97,8 @@ object Templates {
             td(a(href:=s"/shows/${show.urlEncoded}", show)),
             td(watch.episode),
             td(watch.date.toString),
-            td(watch.watched_with.toSeq.flatMap(name => Seq(a(href:=s"/people/${name.urlEncoded}", name), frag(", "))).dropRight(1)),
-            td(form(method:="DELETE", action:=s"/shows/$show/${watch.id}", button("Delete")))
+            td(watch.watched_with.toSeq.map(name => a(href:=s"/people/${name.urlEncoded}", name)).mkSeq(br())),
+            // td(form(method:="DELETE", action:=s"/shows/$show/${watch.id}", button("Delete")))
           )
         }
       )

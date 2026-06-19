@@ -2,7 +2,6 @@ package net.ivoah.tv
 
 import java.nio.file.*
 import net.ivoah.vial.*
-import net.ivoah.tv.Extensions.urlEncoded
 import com.typesafe.config.ConfigFactory
 
 class TV()(implicit val db: Connector) {
@@ -23,9 +22,9 @@ class TV()(implicit val db: Connector) {
       nav_back = true
     ))
 
-    case ("POST", s"/shows/$show", request) => request.auth match {
+    case ("POST", s"/watch", request) => request.auth match {
       case AUTH =>
-        request.form.expect("episode", "date", "watched_with") { (episode: String, date: String, watched_with: String) =>
+        request.form.expect("show", "episode", "date", "watched_with") { (show: String, episode: String, date: String, watched_with: String) =>
           val id = sql"""
             INSERT INTO `tv` (`show`, `episode`, `date`, `watched_with`)
             VALUES ($show, $episode, $date, $watched_with)
@@ -35,10 +34,12 @@ class TV()(implicit val db: Connector) {
       case _ => Response.Unauthorized()
     }
 
-    case ("DELETE", s"/shows/$show/$id", request) => request.auth match {
+    case ("DELETE", s"/watch/$id", request) => request.auth match {
       case AUTH =>
-        sql"DELETE FROM tv WHERE id=$id".update()
-        Response.Redirect(s"/shows/$show")
+        sql"SELECT show FROM tv WHERE id=$id".query(_.getString("show")).headOption.map { show =>
+          sql"DELETE FROM tv WHERE id=$id".update()
+          Response.Redirect(s"/shows/$show")
+        }.getOrElse(Response.NotFound())
       case _ => Response.Unauthorized()
     }
 

@@ -1,7 +1,25 @@
 @import url('https://ivoah.net/common.css');
 
+body {
+    max-width: initial;
+}
+
 .lnav {
     position: absolute;
     left: 5px;
     top: 0px;
+}
+
+input[type="text"] {
+    width: 100%;
+}
+
+input[name="episode"] {
+    width: 6em;
+}
+
+td > button {
+    position: absolute;
+    margin-left: 2em;
+    margin-top: 2.75px;
 }

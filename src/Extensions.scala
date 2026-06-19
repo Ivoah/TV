@@ -4,23 +4,11 @@ import java.net.URLEncoder
 import java.security.MessageDigest
 import scala.util.matching.Regex
 
-object Extensions {
-  extension (str: String) {
-    def replaceAll(regex: String, replacer: Regex.Match => String): String = {
-      regex.r.replaceAllIn(str, replacer)
-    }
+extension (str: String) {
+  def urlEncoded: String = URLEncoder.encode(str, "UTF-8")
+}
 
-    def redacted: String =
-      str
-        .replaceAll(raw"[^>\s](?![^<]*>)(?![^<]*>)", "█")
-        .replaceAll(raw"""<img src=".+?"(.*?)>""", """<img src="/static/redacted.jpg"$1>""")
-    def urlEncoded: String = URLEncoder.encode(str, "UTF-8")
-    def cssEscape: String = str.htmlClass.replaceAll("([!\\\"#$%&'()*+,\\-./:;<=>?@\\[\\\\\\]^`{|}~])", "\\\\$1")
-    def htmlClass: String = str.replaceAll(" ", "")
-
-    def rgbHash: String = {
-      val md5 = MessageDigest.getInstance("md5").digest(str.getBytes)
-      s"rgb(${md5.slice(0, 3).map(_ & 0xff).mkString(", ")})"
-    }
-  }
+extension[T] (seq: Seq[T]) {
+  def mkSeq(start: T, sep: T, end: T): Seq[T] = start +: seq.flatMap(elem => Seq(elem, sep)).dropRight(1) :+ start
+  def mkSeq(sep: T): Seq[T] = seq.flatMap(elem => Seq(elem, sep)).dropRight(1)
 }
