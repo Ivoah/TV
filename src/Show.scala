@@ -1,11 +1,12 @@
 package net.ivoah.tv
 
+import net.ivoah.sqala.*
 import java.time.LocalDate
 
 case class Show(title: String, episodes: Int, last_watched: (String, LocalDate), watched_with: Set[String])
 
 object Show {
-  def getAll()(implicit db: Connector): Seq[Show] = {
+  def getAll()(using Connector): Seq[Show] = {
     sql"""
       SELECT
         t1.`show` `title`,

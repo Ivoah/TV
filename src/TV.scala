@@ -2,9 +2,10 @@ package net.ivoah.tv
 
 import java.nio.file.*
 import net.ivoah.vial.*
+import net.ivoah.sqala.*
 import com.typesafe.config.ConfigFactory
 
-class TV()(implicit val db: Connector) {
+class TV()(using Connector) {
   private val AUTH = Some(Config.auth.username, Config.auth.password)
 
   val router = Router {

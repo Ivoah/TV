@@ -1,6 +1,7 @@
 package net.ivoah.tv
 
 import net.ivoah.vial.*
+import net.ivoah.sqala.Connector
 import org.rogach.scallop.*
 
 import scala.io.Source
@@ -21,7 +22,7 @@ def main(args: String*): Unit = {
   val conf = new Conf(args.toSeq)
   implicit val logger: String => Unit = if (conf.verbose()) println else (msg: String) => ()
 
-  implicit val db: Connector = Connector(Config.database.connectionString, Config.database.user, Config.database.password)
+  given Connector = Connector(Config.database.connectionString, (Config.database.user, Config.database.password))
 
   val tv = TV()
   val server = if (conf.socket.isDefined) {
