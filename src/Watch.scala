@@ -2,7 +2,7 @@ package net.ivoah.tv
 
 import scalatags.Text.all.*
 import java.time.LocalDate
-import net.ivoah.sqala.*
+import net.ivoah.squall.*
 import java.sql.ResultSet
 
 case class Watch(id: Int, show: String, episode: String, date: LocalDate, watched_with: Set[String])

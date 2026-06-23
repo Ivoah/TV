@@ -1,6 +1,6 @@
 package net.ivoah.tv
 
-import net.ivoah.sqala.*
+import net.ivoah.squall.*
 import java.time.LocalDate
 
 case class Show(title: String, episodes: Int, last_watched: (String, LocalDate), watched_with: Set[String])

@@ -1,7 +1,7 @@
 package net.ivoah.tv
 
 import net.ivoah.vial.*
-import net.ivoah.sqala.Connector
+import net.ivoah.squall.Connector
 import org.rogach.scallop.*
 
 import scala.io.Source

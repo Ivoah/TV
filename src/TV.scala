@@ -2,7 +2,7 @@ package net.ivoah.tv
 
 import java.nio.file.*
 import net.ivoah.vial.*
-import net.ivoah.sqala.*
+import net.ivoah.squall.*
 import com.typesafe.config.ConfigFactory
 
 class TV()(using Connector) {
