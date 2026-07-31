@@ -83,7 +83,7 @@ object Templates {
               }
             })),
             td(input(`type`:="date", name:="date", value:=LocalDate.now().toString)),
-            td(input(`type`:="text", name:="watched_with"), button("Add"))
+            td(input(`type`:="text", name:="watched_with", value:=watches.sortBy(_.date).lastOption.map(_.watched_with.mkString(", ")).getOrElse("")), button("Add"))
           )
         ),
         for (watch <- sort_by match {
