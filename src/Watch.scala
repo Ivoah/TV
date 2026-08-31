@@ -17,6 +17,6 @@ object Watch {
   )
 
   def get(id: Int)(using Connector): Option[Watch] = sql"SELECT * FROM tv WHERE id=$id".query(fromResultSet).headOption
-  def forShow(show: String)(using Connector): Seq[Watch] = sql"SELECT * FROM tv WHERE `show` = $show ORDER BY date ASC".query(fromResultSet)
+  def forShow(show: String)(using Connector): Seq[Watch] = sql"SELECT * FROM tv WHERE `show` = $show ORDER BY date, episode ASC".query(fromResultSet)
   def forPerson(person: String)(using Connector): Seq[Watch] = sql"SELECT * FROM tv WHERE LOCATE($person, watched_with) ORDER BY date ASC".query(fromResultSet)
 }
