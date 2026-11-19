@@ -74,7 +74,7 @@ object Templates {
       tbody(
         form(method:="POST", action:=s"/watch",
           tr(
-            td(a(href:=s"/shows/${show.urlEncoded}", show), input(`type`:="hidden", name:="show", value:=show)),
+            td(input(`type`:="text", name:="show", value:=show)),
             td(input(`type`:="text", name:="episode", value:={
               watches.sortBy(_.date).lastOption.map(_.episode) match {
                 case Some(s"s${IntExtractor(season)}e${IntExtractor(episode)}") =>
@@ -94,7 +94,7 @@ object Templates {
           case _ => watches.sortBy(_.date).reverse
         }) yield {
           tr(
-            td(a(href:=s"/shows/${show.urlEncoded}", show)),
+            td(a(href:=s"/shows/${watch.show.urlEncoded}", watch.show)),
             td(watch.episode),
             td(watch.date.toString),
             td(watch.watched_with.toSeq.map(name => a(href:=s"/people/${name.urlEncoded}", name)).mkSeq(br())),
